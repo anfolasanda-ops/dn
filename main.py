@@ -24,7 +24,7 @@ from telegram.constants import ParseMode
 from requests.adapters import HTTPAdapter
 
 # ========== CONFIG ==========
-BOT_TOKEN = "8384676447:AAFUZJlfy3BpnU98EgLRkUjKz_b6UBDgyeY"
+BOT_TOKEN = "8580437712:AAHw27ESWCqNc4zOQyLizERVMOl5REv2PM8"
 ADMIN_IDS = [8744777152]
 DB_PATH = "xbox_users.db"
 RESULTS_DIR = "XBOX_RESULTS"
