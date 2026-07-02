@@ -1,4 +1,18 @@
-python-telegram-bot>=21.0
-requests>=2.31.0
-aiohttp>=3.9.0
-urllib3>=2.0.0
+# Boosteroid Ultimate Bot - Requirements
+# Python 3.11+
+
+
+# ========== CORE ==========
+aiogram==3.17.0
+aiohttp==3.11.11
+aiofiles==24.1.0
+
+# ========== DATABASE ==========
+# SQLite3 (built-in, no install needed)
+
+# ========== UTILITIES ==========
+python-dotenv==1.0.1
+
+# ========== OPTIONAL ==========
+# requests==2.32.3  # if needed
+# beautifulsoup4==4.12.3  # if needed
