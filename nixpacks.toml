@@ -1,0 +1,11 @@
+[build]
+phases = ["install"]
+
+[install]
+cmd = "pip install -r requirements.txt"
+
+[phases.setup]
+nixPkgs = ["python311"]
+
+[start]
+cmd = "python main.py"
